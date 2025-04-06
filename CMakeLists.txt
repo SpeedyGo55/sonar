@@ -33,6 +33,9 @@ project(sonar C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# Add pico-servo subdirectory
+add_subdirectory(lib/pico-servo)
+
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(sonar sonar.cpp )
@@ -46,12 +49,17 @@ pico_enable_stdio_usb(sonar 1)
 
 # Add the standard library to the build
 target_link_libraries(sonar
-        pico_stdlib)
+    pico_stdlib
+    hardware_pwm
+    pico-servo
+)
+
 
 # Add the standard include files to the build
 target_include_directories(sonar PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
+    lib/pico-servo/include
 )
 
-pico_add_extra_outputs(sonar)
 
+pico_add_extra_outputs(sonar)
