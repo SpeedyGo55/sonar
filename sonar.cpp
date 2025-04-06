@@ -14,13 +14,16 @@ extern "C" {
 #define MIN_PULSE 500
 #define SERVO_PIN 3
 
-
-int main() {
+void setup() {
     servo_init();
     servo_clock_auto();
     servo_attach(SERVO_PIN);
     servo_set_bounds(300, 1250);
     stdio_init_all();
+}
+
+int main() {
+    setup();
     int angle = 100;
     bool direction = true;
     while (true)
