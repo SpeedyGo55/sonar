@@ -49,7 +49,6 @@ int getPulse(int trigPin, int echoPin) {
     absolute_time_t startTime = get_absolute_time();
     while (gpio_get(echoPin) == 1) {
         width++;
-        sleep_ms(1);
         if (width > TIMEOUT) return 0;
     }
     absolute_time_t endTime = get_absolute_time();
@@ -69,9 +68,9 @@ int main() {
     while (true)
     {
         servo_move_to(SERVO_PIN, angle);
-        int distance = getPulse(TRIG_PIN, ECHO_PIN);
+        int distance = getCM(TRIG_PIN, ECHO_PIN);
         printf("%d ; %d\n", angle, distance);
-        sleep_ms(10);
+        sleep_ms(40);
         if (angle >= 180 || angle <= 0) {
             direction = !direction;
         }
