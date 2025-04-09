@@ -17,7 +17,7 @@ extern "C" {
 #define MAX_PULSE 2500
 #define MIN_PULSE 500
 #define SERVO_PIN 3
-#define TIMEOUT 26100
+#define TIMEOUT 261000
 #define TRIG_PIN 10
 #define ECHO_PIN 11
 
@@ -49,7 +49,7 @@ int getPulse(int trigPin, int echoPin) {
     absolute_time_t startTime = get_absolute_time();
     while (gpio_get(echoPin) == 1) {
         width++;
-        if (width > TIMEOUT) return 0;
+        if (width > TIMEOUT) return -1;
     }
     absolute_time_t endTime = get_absolute_time();
 
@@ -58,7 +58,22 @@ int getPulse(int trigPin, int echoPin) {
 
 int getCM(int trigPin, int echoPin) {
     int pulseLength = getPulse(trigPin, echoPin);
+    if (pulseLength==-1) {
+        return -1;
+    }
     return pulseLength / 29 / 2;
+}
+
+int sum(int numbers[5]) {
+    int ret = 0;
+    for (int i=0; i<5; i++){
+        ret += numbers[i];
+    }
+    return ret;
+}
+
+int average(int numbers[5]) {
+    return sum(numbers)/5;
 }
 
 int main() {
@@ -67,10 +82,20 @@ int main() {
     bool direction = true;
     while (true)
     {
+        int distances[5];
+        for (int i=0; i<5; i++) {
+            distances[i] = getCM(TRIG_PIN, ECHO_PIN);
+            if (distances[i]==-1) {
+                for (int j=0; i<5; i++){
+                    distances[i] =-1;
+                }
+                break;
+            }
+            sleep_ms(10);
+        }
         servo_move_to(SERVO_PIN, angle);
-        int distance = getCM(TRIG_PIN, ECHO_PIN);
+        int distance = average(distances);
         printf("%d ; %d\n", angle, distance);
-        sleep_ms(40);
         if (angle >= 180 || angle <= 0) {
             direction = !direction;
         }
